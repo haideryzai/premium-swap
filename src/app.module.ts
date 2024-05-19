@@ -1,24 +1,24 @@
-import { Module } from '@nestjs/common';
+import { Module, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { UsersController } from './users/users.controller';
-import { UsersService } from './users/users.service';
+import { sequelizeConfig } from './config/sequelize.config';
+import { UserModule } from './user/user.module';
+import { Sequelize } from 'sequelize-typescript';
 @Module({
-  imports: [
-    SequelizeModule.forRoot({
-      autoLoadModels: true,
-      synchronize: true,
-      sync: { alter: true },
-      dialect: 'mysql',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USERNAME || 'haider',
-      password: process.env.DB_PASSWORD || 'password',
-      database: process.env.DB_NAME,
-    }),
-  ],
-  controllers: [AppController, UsersController],
-  providers: [AppService, UsersService],
+  imports: [SequelizeModule.forRoot(sequelizeConfig), UserModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(private sequelize: Sequelize) {}
+
+  async onModuleInit() {
+    try {
+      await this.sequelize.authenticate();
+      console.log('db successfully connected');
+    } catch (error) {
+      console.error('Unable to connect to the database:', error);
+    }
+  }
+}
