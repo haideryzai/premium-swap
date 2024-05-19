@@ -2,7 +2,7 @@ import { Module, OnModuleInit } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { sequelizeConfig } from './config/sequelize.config';
+import { sequelizeConfig } from './config/orm.config';
 import { UserModule } from './user/user.module';
 import { Sequelize } from 'sequelize-typescript';
 @Module({
