@@ -43,6 +43,7 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
   @Post('signin')
   async signIn(@Body() signInDTO): Promise<any> {
+    console.log('🚀 ~ file: user.controller.ts ~ AuthController ~ signInDto:');
     const result = await this.UserService.signIn(signInDTO);
     return result;
   }

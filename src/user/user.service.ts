@@ -5,7 +5,7 @@ import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
 import { generateJwtToken } from '../utils/generateJWT';
-
+import { successResponse, errorResponse } from '../utils/responsesUtil';
 @Injectable()
 export class UserService {
   constructor(
@@ -54,10 +54,17 @@ export class UserService {
         username: user.username,
         user_type: user.user_type,
       });
-      return { user, token };
+      console.log('🚀 ~ file: user.service.ts ~ UserService ~ signUp ~ sucess');
+      return successResponse({ user, token }, 'User created successfully');
     } catch (error) {
-      console.log(error);
-      return error;
+      console.log(
+        '🚀 ~ file: user.service.ts ~ UserService ~ signUp ~ error',
+        error,
+      );
+      if (error?.errors[0]?.message) {
+        return errorResponse({}, error?.errors[0]?.message);
+      }
+      return errorResponse({}, error.original.code);
     }
   }
 
@@ -68,21 +75,22 @@ export class UserService {
         where: { email_address },
       });
       if (!user) {
-        return 'Invalid credentials';
+        return errorResponse({}, 'Please, provide valid credentials');
       }
       const isValid = await bcrypt.compare(password, user.password);
       if (!isValid) {
-        return 'Please, provide valid credentials';
+        return errorResponse({}, 'Please, provide valid credentials');
       }
       const token = generateJwtToken({
         id: user.id,
         username: user.username,
         user_type: user.user_type,
       });
-      return { user, token };
+      console.log('🚀 ~ file: user.service.ts ~ UserService ~ signIn ~ sucess');
+      return successResponse({ user, token }, 'User logged in successfully');
     } catch (error) {
-      console.log(error);
-      return error;
+      console.log('🚀 ~ file: user.service.ts ~ UserService ~ signIn ~ error');
+      return errorResponse({}, error.original.code);
     }
   }
 }
