@@ -7,11 +7,11 @@ import {
   HasMany,
   BelongsToMany,
   ForeignKey,
+  PrimaryKey,
+  AutoIncrement,
   BelongsTo,
   CreatedAt,
   UpdatedAt,
-  PrimaryKey,
-  AutoIncrement,
 } from 'sequelize-typescript';
 
 @Table
@@ -20,28 +20,26 @@ export class User extends Model<User> {
   @AutoIncrement
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
-    autoIncrement: true,
-    primaryKey: true,
+    allowNull: true,
   })
   id: number;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
   })
   username: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
   })
   password: string;
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
+    allowNull: true,
     unique: true,
   })
   email_address: string;
