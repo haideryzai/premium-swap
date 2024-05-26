@@ -5,8 +5,8 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const config = new DocumentBuilder()
-    .setTitle('AUTH APPLICATION IN NestJS WITH SEQUELIZE')
-    .setDescription('The NestJS Sequelize API description')
+    .setTitle('Premium Swap API')
+    .setDescription('API for Premium Swap App')
     .setVersion('1.0')
     .addTag('sequelize')
     .build();
