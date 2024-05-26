@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpCode } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
 import * as bcrypt from 'bcrypt';
@@ -90,6 +90,21 @@ export class UserService {
       return successResponse({ user, token }, 'User logged in successfully');
     } catch (error) {
       console.log('🚀 ~ file: user.service.ts ~ UserService ~ signIn ~ error');
+      return errorResponse({}, error.original.code);
+    }
+  }
+
+  public async resetPass(resetPassDTO) {
+    try {
+      console.log(
+        '🚀 ~ file: user.service.ts ~ UserService ~ resetPassword ~ sucess',
+      );
+
+      return successResponse({}, 'Password reset successfully');
+    } catch (error) {
+      console.log(
+        '🚀 ~ file: user.service.ts ~ UserService ~ resetPassword ~ error',
+      );
       return errorResponse({}, error.original.code);
     }
   }

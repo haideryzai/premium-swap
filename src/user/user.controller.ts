@@ -20,6 +20,7 @@ import { UserService } from './user.service';
 // dto
 import { SignUpDTO } from './dtos/signup.dto';
 import { SignInDTO } from './dtos/signin.dto';
+import { ResetPassDTO } from './dtos/resetpass.dto';
 
 @Controller('api/auth')
 export class UserController {
@@ -45,6 +46,19 @@ export class UserController {
   async signIn(@Body() signInDTO): Promise<any> {
     console.log('🚀 ~ file: user.controller.ts ~ AuthController ~ signInDto:');
     const result = await this.UserService.signIn(signInDTO);
+    return result;
+  }
+
+  @ApiTags('Auth')
+  @ApiOkResponse({ type: User })
+  @ApiBadRequestResponse({ description: 'The request body is invalid.' })
+  @ApiNotFoundResponse({ description: 'The resource was not found.' })
+  @Post('resetpass')
+  async resetPass(@Body() resetPassDTO): Promise<any> {
+    console.log(
+      '🚀 ~ file: user.controller.ts ~ AuthController ~ resetPassDto:',
+    );
+    const result = await this.UserService.resetPass(resetPassDTO);
     return result;
   }
 }
