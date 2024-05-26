@@ -4,6 +4,7 @@ module.exports = {
     await queryInterface.addColumn('Users', 'email_address', {
       type: Sequelize.STRING,
       allowNull: true,
+      unique: true,
     });
     await queryInterface.addColumn('Users', 'email_verified', {
       type: Sequelize.STRING,

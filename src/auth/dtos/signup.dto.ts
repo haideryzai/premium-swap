@@ -18,7 +18,6 @@ export class SignUpDTO {
 
   @ApiProperty({
     description: 'Password for the account',
-    uniqueItems: true,
   })
   @IsString()
   @Length(4, 10)

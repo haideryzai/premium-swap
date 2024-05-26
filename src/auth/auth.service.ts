@@ -21,6 +21,7 @@ export class AuthService {
         phone_number,
         firstName,
         lastName,
+        username,
         address,
         city,
         state,
@@ -37,6 +38,7 @@ export class AuthService {
         phone_number,
         firstName,
         lastName,
+        username,
         address,
         city,
         state,
@@ -56,10 +58,10 @@ export class AuthService {
     } catch (error) {
       console.log(
         '🚀 ~ file: auth.service.ts ~ AuthService ~ signUp ~ error',
-        error,
+        error.errors,
       );
-      if (error?.errors[0]?.message) {
-        return errorResponse({}, error?.errors[0]?.message);
+      if (error.original.code === 'ER_DUP_ENTRY') {
+        return errorResponse({}, 'User already exists');
       }
       return errorResponse({}, error.original.code);
     }
