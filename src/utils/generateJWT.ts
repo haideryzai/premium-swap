@@ -5,6 +5,7 @@ const expiresIn = '15d';
 
 interface JwtPayload {
   id: number;
+  email_address: string;
   username: string;
   user_type: string;
 }
