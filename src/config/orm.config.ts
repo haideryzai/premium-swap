@@ -1,5 +1,8 @@
 import { SequelizeModuleOptions } from '@nestjs/sequelize';
+
+// models
 import { User } from '../auth/auth.model';
+import { Subscriptions } from '../subscription/subscription.model';
 
 export const sequelizeConfig: SequelizeModuleOptions = {
   dialect: 'mysql',
@@ -8,6 +11,6 @@ export const sequelizeConfig: SequelizeModuleOptions = {
   username: 'haider',
   password: 'password',
   database: 'nest_learn',
-  models: [User],
+  models: [User, Subscriptions],
   synchronize: true,
 };
