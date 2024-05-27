@@ -1,68 +1,67 @@
 import { Injectable, HttpCode } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from './user.model';
+import { User } from './auth.model';
 import * as bcrypt from 'bcrypt';
 import { Op } from 'sequelize';
 
 import { generateJwtToken } from '../utils/generateJWT';
 import { successResponse, errorResponse } from '../utils/responsesUtil';
 @Injectable()
-export class UserService {
+export class AuthService {
   constructor(
     @InjectModel(User)
-    private userModel: typeof User,
+    private authModel: typeof User,
   ) {}
 
   public async signUp(signUpDTO) {
     try {
       const {
-        username,
         password,
         email_address,
         phone_number,
         firstName,
         lastName,
+        username,
         address,
         city,
         state,
         zip,
         country,
         image,
-        user_type,
       } = signUpDTO;
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
 
-      const user = await this.userModel.create({
-        username,
+      const auth = await this.authModel.create({
         password: hashedPassword,
         email_address,
         phone_number,
         firstName,
         lastName,
+        username,
         address,
         city,
         state,
         zip,
         country,
         image,
-        user_type,
       });
 
       const token = generateJwtToken({
-        id: user.id,
-        username: user.username,
-        user_type: user.user_type,
+        id: auth.id,
+        email_address: auth.email_address,
+        user_type: auth.user_type,
+        username: auth.username,
       });
-      console.log('🚀 ~ file: user.service.ts ~ UserService ~ signUp ~ sucess');
-      return successResponse({ user, token }, 'User created successfully');
+      console.log('🚀 ~ file: auth.service.ts ~ AuthService ~ signUp ~ sucess');
+      return successResponse({ auth, token }, 'User created successfully');
     } catch (error) {
       console.log(
-        '🚀 ~ file: user.service.ts ~ UserService ~ signUp ~ error',
-        error,
+        '🚀 ~ file: auth.service.ts ~ AuthService ~ signUp ~ error',
+        error.errors,
       );
-      if (error?.errors[0]?.message) {
-        return errorResponse({}, error?.errors[0]?.message);
+      if (error.original.code === 'ER_DUP_ENTRY') {
+        return errorResponse({}, 'User already exists');
       }
       return errorResponse({}, error.original.code);
     }
@@ -71,25 +70,26 @@ export class UserService {
   public async signIn(signInDTO) {
     const { email_address, password } = signInDTO;
     try {
-      const user = await this.userModel.findOne({
+      const auth = await this.authModel.findOne({
         where: { email_address },
       });
-      if (!user) {
+      if (!auth) {
         return errorResponse({}, 'Please, provide valid credentials');
       }
-      const isValid = await bcrypt.compare(password, user.password);
+      const isValid = await bcrypt.compare(password, auth.password);
       if (!isValid) {
         return errorResponse({}, 'Please, provide valid credentials');
       }
       const token = generateJwtToken({
-        id: user.id,
-        username: user.username,
-        user_type: user.user_type,
+        id: auth.id,
+        email_address: auth.email_address,
+        user_type: auth.user_type,
+        username: auth.username,
       });
-      console.log('🚀 ~ file: user.service.ts ~ UserService ~ signIn ~ sucess');
-      return successResponse({ user, token }, 'User logged in successfully');
+      console.log('🚀 ~ file: auth.service.ts ~ AuthService ~ signIn ~ sucess');
+      return successResponse({ auth, token }, 'User logged in successfully');
     } catch (error) {
-      console.log('🚀 ~ file: user.service.ts ~ UserService ~ signIn ~ error');
+      console.log('🚀 ~ file: auth.service.ts ~ AuthService ~ signIn ~ error');
       return errorResponse({}, error.original.code);
     }
   }
@@ -97,13 +97,13 @@ export class UserService {
   public async resetPass(resetPassDTO) {
     try {
       console.log(
-        '🚀 ~ file: user.service.ts ~ UserService ~ resetPassword ~ sucess',
+        '🚀 ~ file: auth.service.ts ~ AuthService ~ resetPassword ~ sucess',
       );
 
       return successResponse({}, 'Password reset successfully');
     } catch (error) {
       console.log(
-        '🚀 ~ file: user.service.ts ~ UserService ~ resetPassword ~ error',
+        '🚀 ~ file: auth.service.ts ~ AuthService ~ resetPassword ~ error',
       );
       return errorResponse({}, error.original.code);
     }
