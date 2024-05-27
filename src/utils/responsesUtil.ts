@@ -1,15 +1,15 @@
 const successResponse = (data: any, message?: string) => {
   return {
     status: 'success',
-    message,
     data,
+    message,
   };
 };
 const errorResponse = (data: any, message?: string) => {
   return {
     status: 'error',
-    message,
     data,
+    message,
   };
 };
 export { successResponse, errorResponse };

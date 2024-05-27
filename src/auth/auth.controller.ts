@@ -12,10 +12,10 @@ import {
 } from '@nestjs/swagger';
 
 // model
-import { User } from './user.model';
+import { User } from './auth.model';
 
 // service
-import { UserService } from './user.service';
+import { AuthService } from './auth.service';
 
 // dto
 import { SignUpDTO } from './dtos/signup.dto';
@@ -23,8 +23,8 @@ import { SignInDTO } from './dtos/signin.dto';
 import { ResetPassDTO } from './dtos/resetpass.dto';
 
 @Controller('api/auth')
-export class UserController {
-  constructor(private UserService: UserService) {}
+export class AuthController {
+  constructor(private AuthService: AuthService) {}
 
   @ApiTags('Auth')
   @ApiOkResponse({ type: User })
@@ -32,8 +32,8 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
   @Post('signup')
   async signUp(@Body() SignUpDTO: SignUpDTO): Promise<any> {
-    console.log('🚀 ~ file: user.controller.ts ~ AuthController ~ signUpDto:');
-    const result = await this.UserService.signUp(SignUpDTO);
+    console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ signUp:');
+    const result = await this.AuthService.signUp(SignUpDTO);
 
     return result;
   }
@@ -44,8 +44,8 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
   @Post('signin')
   async signIn(@Body() signInDTO): Promise<any> {
-    console.log('🚀 ~ file: user.controller.ts ~ AuthController ~ signInDto:');
-    const result = await this.UserService.signIn(signInDTO);
+    console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ signIn:');
+    const result = await this.AuthService.signIn(signInDTO);
     return result;
   }
 
@@ -55,10 +55,8 @@ export class UserController {
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
   @Post('resetpass')
   async resetPass(@Body() resetPassDTO): Promise<any> {
-    console.log(
-      '🚀 ~ file: user.controller.ts ~ AuthController ~ resetPassDto:',
-    );
-    const result = await this.UserService.resetPass(resetPassDTO);
+    console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ resetPass:');
+    const result = await this.AuthService.resetPass(resetPassDTO);
     return result;
   }
 }
