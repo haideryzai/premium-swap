@@ -1,15 +1,11 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, Post, Res } from '@nestjs/common';
 import {
   ApiTags,
-  ApiCreatedResponse,
   ApiOkResponse,
   ApiBadRequestResponse,
-  ApiUnauthorizedResponse,
-  ApiForbiddenResponse,
   ApiNotFoundResponse,
-  ApiInternalServerErrorResponse,
-  ApiExtraModels,
 } from '@nestjs/swagger';
+import { Response } from 'express';
 
 // model
 import { User } from './auth.model';
@@ -31,22 +27,23 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'The request body is invalid.' })
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
   @Post('signup')
-  async signUp(@Body() SignUpDTO: SignUpDTO): Promise<any> {
+  async signUp(@Body() SignUpDTO: SignUpDTO, @Res() res: Response): Promise<any> {
     console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ signUp:');
     const result = await this.AuthService.signUp(SignUpDTO);
 
-    return result;
+    return res.status(result.code).json(result);
   }
 
   @ApiTags('Auth')
   @ApiOkResponse({ type: User })
   @ApiBadRequestResponse({ description: 'The request body is invalid.' })
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
+  @HttpCode(200)
   @Post('signin')
-  async signIn(@Body() signInDTO): Promise<any> {
+  async signIn(@Body() signInDTO: SignInDTO, @Res() res: Response): Promise<any> {
     console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ signIn:');
     const result = await this.AuthService.signIn(signInDTO);
-    return result;
+    return res.status(result.code).json(result);
   }
 
   @ApiTags('Auth')
@@ -54,9 +51,9 @@ export class AuthController {
   @ApiBadRequestResponse({ description: 'The request body is invalid.' })
   @ApiNotFoundResponse({ description: 'The resource was not found.' })
   @Post('resetpass')
-  async resetPass(@Body() resetPassDTO): Promise<any> {
-    console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ resetPass:');
+  async resetPass(@Body() resetPassDTO: ResetPassDTO, @Res() res: Response): Promise<any> {
     const result = await this.AuthService.resetPass(resetPassDTO);
-    return result;
+    console.log('🚀 ~ file: auth.controller.ts ~ AuthController ~ resetPass ~ success');
+    return res.status(result.code).json(result);
   }
 }

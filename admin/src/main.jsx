@@ -1,23 +1,18 @@
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Layout from "./screens/Layout";
-import { Home } from "./screens/Home";
-// import Blogs from "./pages/Blogs";
-// import NoPage from "./pages/NoPage";
+import { BrowserRouter } from "react-router-dom";
 
-export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          {/* <Route path="blogs" element={<Blogs />} /> */}
-          {/* <Route path="*" element={<NoPage />} /> */}
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  );
-}
+import { Provider } from "react-redux";
+import App from "./App.jsx";
+import store from "./store/store.js";
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<App />);
+import "./index.css";
+ReactDOM.createRoot(document.getElementById("root")).render(
+  <Provider store={store}>
+    <React.Fragment>
+      {/* <BrowserRouter> */}
+      <App />
+      {/* </BrowserRouter> */}
+    </React.Fragment>
+  </Provider>
+);

@@ -6,14 +6,20 @@ import { Op } from 'sequelize';
 
 import { generateJwtToken } from '../utils/generateJWT';
 import { successResponse, errorResponse } from '../utils/responsesUtil';
+import { SignUpDTO } from './dtos/signup.dto';
+import { ResetPassDTO } from './dtos/resetpass.dto';
+import { MailerService } from 'src/mailer/mailer.service';
+import { SignInDTO } from './dtos/signin.dto';
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User)
     private authModel: typeof User,
-  ) {}
+    private mailerService: MailerService,
+  ) {
+  }
 
-  public async signUp(signUpDTO) {
+  public async signUp(signUpDTO: SignUpDTO) {
     try {
       const {
         password,
@@ -39,6 +45,7 @@ export class AuthService {
         firstName,
         lastName,
         username,
+        email_verified: false,
         address,
         city,
         state,
@@ -54,31 +61,31 @@ export class AuthService {
         username: auth.username,
       });
       console.log('🚀 ~ file: auth.service.ts ~ AuthService ~ signUp ~ sucess');
-      return successResponse({ auth, token }, 'User created successfully');
+      return successResponse({ auth, token }, 'User created successfully', 201);
     } catch (error) {
       console.log(
         '🚀 ~ file: auth.service.ts ~ AuthService ~ signUp ~ error',
         error.errors,
       );
       if (error.original.code === 'ER_DUP_ENTRY') {
-        return errorResponse({}, 'User already exists');
+        return errorResponse({}, 'User already exists', 409);
       }
-      return errorResponse({}, error.original.code);
+      return errorResponse({}, error, 500);
     }
   }
 
-  public async signIn(signInDTO) {
+  public async signIn(signInDTO: SignInDTO) {
     const { email_address, password } = signInDTO;
     try {
       const auth = await this.authModel.findOne({
         where: { email_address },
       });
       if (!auth) {
-        return errorResponse({}, 'Please, provide valid credentials');
+        return errorResponse({}, 'Please, provide valid credentials', 401);
       }
       const isValid = await bcrypt.compare(password, auth.password);
       if (!isValid) {
-        return errorResponse({}, 'Please, provide valid credentials');
+        return errorResponse({}, 'Please, provide valid credentials', 401);
       }
       const token = generateJwtToken({
         id: auth.id,
@@ -90,22 +97,23 @@ export class AuthService {
       return successResponse({ auth, token }, 'User logged in successfully');
     } catch (error) {
       console.log('🚀 ~ file: auth.service.ts ~ AuthService ~ signIn ~ error');
-      return errorResponse({}, error.original.code);
+      return errorResponse({}, error, 500);
     }
   }
 
-  public async resetPass(resetPassDTO) {
+  public async resetPass(resetPassDTO: ResetPassDTO) {
     try {
       console.log(
         '🚀 ~ file: auth.service.ts ~ AuthService ~ resetPassword ~ sucess',
       );
-
-      return successResponse({}, 'Password reset successfully');
+      const { email_address } = resetPassDTO;
+      await this.mailerService.sendForgotPasswordEmail(email_address);
+      return successResponse({}, 'Password reset successfully', 200);
     } catch (error) {
       console.log(
         '🚀 ~ file: auth.service.ts ~ AuthService ~ resetPassword ~ error',
       );
-      return errorResponse({}, error.original.code);
+      return errorResponse({}, error, 500);
     }
   }
 }

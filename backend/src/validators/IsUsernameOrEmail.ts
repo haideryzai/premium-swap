@@ -1,5 +1,3 @@
-// src/validators/IsUsernameOrEmail.ts
-
 import {
   registerDecorator,
   ValidationOptions,

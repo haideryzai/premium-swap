@@ -1,15 +1,18 @@
-const successResponse = (data: any, message?: string) => {
+
+const successResponse = (data: any, message?: string, code?: number) => {
   return {
-    status: 'success',
+    error: false,
     data,
     message,
+    code: code,
   };
 };
-const errorResponse = (data: any, message?: string) => {
+const errorResponse = (data: any, message?: string, code?: number) => {
   return {
-    status: 'error',
+    error: true,
     data,
     message,
+    code: code,
   };
 };
 export { successResponse, errorResponse };

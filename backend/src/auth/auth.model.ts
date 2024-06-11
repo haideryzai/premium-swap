@@ -48,7 +48,7 @@ export class User extends Model<User> {
     type: DataType.STRING,
     allowNull: true,
   })
-  email_verified: string;
+  email_verified: boolean;
 
   @Column({
     type: DataType.STRING,

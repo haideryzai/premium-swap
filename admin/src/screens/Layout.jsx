@@ -1,17 +1,21 @@
 import { useState } from "react";
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 
 // imports
 import { Nav } from "./components/Nav";
+import { SideBar } from "./components/SideBar";
 
 const Layout = () => {
-  const [showNav, setShowNav] = useState(true);
-  window.location.pathname == "/" ? setShowNav(false) : setShowNav(true);
+  const showNav = window.location.pathname == "/login" ? false : true;
+  if (!localStorage.getItem("token")) {
+    useNavigate("/logi");
+  }
   return (
     <>
-      {/* {showNav && <Nav />} */}
-
-      <Outlet />
+      <div className="flex flex-col">
+        {showNav && <SideBar className="w-[15%]" />}
+        <Outlet className="w-[85%]" />
+      </div>
     </>
   );
 };
